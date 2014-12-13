@@ -1,0 +1,235 @@
+buildscript {
+    repositories {
+        maven { url 'http://jcenter.bintray.com' }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4'
+        classpath 'org.hidetake:gradle-ssh-plugin:0.3.0'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.0"
+}
+
+version = 0.1
+
+apply plugin: 'cargo'
+apply plugin: 'ssh'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+//apply plugin: 'pmd'
+apply plugin: 'checkstyle'
+apply plugin: "sonar-runner"
+
+
+repositories {
+    mavenCentral()
+}
+
+//find out howto make groovy directories in the systemTest
+sourceSets {
+    systemTest
+    performanceTest
+    integrationTest
+    resources
+}
+
+dependencies {
+    providedCompile 'javax.servlet:servlet-api:2.5'
+    compile "jfree:jfreechart:1.0.12"
+    compile "joda-time:joda-time:2.2"
+    providedCompile 'org.rxtx:rxtx:2.1.7'
+    //providedCompile 'javax.comm:comm:2.0.3' 
+    //compile files('/Library/Java/Extensions/RXTXcomm.jar')
+
+    compile(group: 'log4j', name: 'log4j', version: '1.2.17')
+    compile(group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.6.6') // van nexus apd
+    compile(group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5')
+
+
+    //providedCompile 'org.jfree:jfreechart:1.0.13'
+    //providedCompile 'org.jfree:data:1.0.13'
+
+
+    runtime 'javax.servlet:jstl:1.1.2'
+    compile localGroovy()
+    testCompile localGroovy()
+    testCompile "org.testng:testng:6.3.1"
+    testCompile "junit:junit:4.9"
+    testCompile "org.mockito:mockito-all:1.9.5"
+    runtime 'postgresql:postgresql:9.0-801.jdbc4'
+    runtime "org.slf4j:log4j-over-slf4j:1.7.5"
+    runtime "org.slf4j:jcl-over-slf4j:1.7.5"
+    runtime "org.slf4j:jul-to-slf4j:1.7.5"
+
+    //compile 'postgresql:postgresql:9.0-801.jdbc4'
+
+    integrationTestCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
+    integrationTestCompile configurations.testCompile
+    integrationTestRuntime configurations.testRuntime
+    systemTestCompile configurations.testCompile
+    systemTestRuntime configurations.testRuntime
+    performanceTestCompile configurations.testCompile
+    performanceTestRuntime configurations.testRuntime
+
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled false
+    }
+}
+
+ext {
+    tomcatLog = file("build/tomcatOutput.log")
+    cargoLocalTomcat  = "localTomcatPath NOT SET!"
+}
+
+task prepareTomcatLog() {
+    if (!tomcatLog.exists()) {
+        if (!buildDir.exists()) {
+                buildDir.mkdir()
+            }
+        tomcatLog.createNewFile()
+    }
+}
+
+
+
+
+cargoRunLocal.dependsOn('prepareTomcatLog','war')
+
+if (!hasProperty('localTomcatPath')) {
+    //cargoLocalTomcat = "localTomcatPath NOT SET!"
+} else {
+    cargoLocalTomcat = localTomcatPath
+}
+logger.quiet "cargoLocalTomcat = ${cargoLocalTomcat}"
+
+
+cargo {
+
+    containerId = 'tomcat7x'
+    port = 9080
+
+    deployable {
+        file = file("build/libs/smartMeter.war")
+        context = '/smartMeter'
+    }
+
+    remote {
+        hostname = "odin.nl.cx"
+        username = 'bpmone'
+        password = 'janka12345'
+    }
+
+    local {
+        homeDir = file("${cargoLocalTomcat}")
+        output = tomcatLog
+        timeout = 60000
+
+        containerProperties {
+            property 'cargo.tomcat.ajp.port', 8010
+        }
+    }
+
+}
+
+task systemTest(type: Test) {
+    doFirst{
+        //project.cargo.deployable.context = "smartMeterSystemTest"
+        //cargoReDeployRemote.execute()
+    }
+    testClassesDir = sourceSets.systemTest.output.classesDir
+    classpath = sourceSets.systemTest.runtimeClasspath
+    reports.junitXml.destination = file("${reporting.baseDir}/systemTest")
+    reports.html.destination = file("${reporting.baseDir}/systemTest")
+}
+
+
+task performanceTest(type: Test) {
+    testClassesDir = sourceSets.performanceTest.output.classesDir
+    classpath = sourceSets.performanceTest.runtimeClasspath
+    reports.junitXml.destination = file("${reporting.baseDir}/performanceTest")
+    reports.html.destination = file("${reporting.baseDir}/performanceTest")
+}
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    reports.junitXml.destination = file("${reporting.baseDir}/integrationTest")
+    reports.html.destination = file("${reporting.baseDir}/integrationTest")
+}
+
+task liveTestGroup(dependsOn: ['systemTest', 'performanceTest', 'integrationTest'])
+//to start/stop tomcat for test runs
+liveTestGroup.dependsOn war, cargoStartLocal
+liveTestGroup.finalizedBy cargoStopLocal
+
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://192.168.8.1:9000"
+        property "sonar.jdbc.url", "jdbc:h2:tcp://192.168.8.1:9092/sonar"
+        //property "sonar.jdbc.driverClassName", "org.postgresql.Driver"
+        property "sonar.jdbc.username", "sonar"
+        property "sonar.jdbc.password", "sonar"
+        property "sonar.jacoco.reportPath", "$buildDir/jacoco/test.exec"
+
+    }
+}
+
+
+task "createProjectStructure" << {
+    sourceSets*.java.srcDirs*.each { it.mkdirs() }
+    sourceSets*.groovy.srcDirs*.each { it.mkdirs() }
+    sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Collect",
+                "Manifest-version": version,
+                "Main-Class": "com.soldev.Collect")
+    }
+}
+
+ext {
+    SSH_PRIVATE_KEY = "/.ssh/id_rsa"
+}
+
+ssh { knownHosts = allowAnyHosts }
+
+remotes {
+    odin {
+        role('tomcatServer')
+        // localhost is the default value. This is changed by getDnsName which is tied to this job
+        // with a listener so it runs at run time not compile time
+        host = 'odin.midgard.nl'
+        user = 'kjansen'
+        identity = file(System.getProperty('user.home') + SSH_PRIVATE_KEY)
+    }
+}
+
+task uploadFiles(type: SshTask, dependsOn: "jar") {
+    description "Upload the toBeTransPorted to the tomcat ROOT directory on the remote tomcat server"
+    session(remotes.odin) {
+        def localDir = "build/libs/DataCollector-0.1.jar"
+        def remoteDir = "/tmp"
+        put(localDir, remoteDir)
+    }
+}
+
+task runUploadedJar(type: SshTask, dependsOn: "uploadFiles") {
+    description "Create static directory on tomcat to service static content"
+    session(remotes.odin) {
+        execute("java -jar /tmp/DataCollector-0.1.jar")
+    }
+}
+
+
