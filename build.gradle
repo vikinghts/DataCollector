@@ -136,10 +136,10 @@ remotes {
     odin {
         role('tomcatServer')
         identity = file(System.getProperty('user.home') + SSH_PRIVATE_KEY)
-        host = System.getenv().DataCollectorHost
-        port = System.getenv().DataCollectorPort.toInteger()
-        user = System.getenv().DataCollectorUser
-
+        def envPort = System.getenv("DataCollectorPort") ?: "1"
+        port = envPort.toInteger()
+        host = System.getenv("DataCollectorHost") ?: "dummy"
+        user = System.getenv("DataCollectorUser") ?: "dummy"
     }
 }
 
