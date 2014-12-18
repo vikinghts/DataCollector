@@ -184,3 +184,12 @@ publishing {
         }
     }
 }
+
+task buildDockerContainer(type: Exec) {
+    workingDir 'docker/'
+    commandLine 'docker', 'build', '-t', "datacollector:${version}", '.'
+}
+
+task runDockerContainer(type: Exec, dependsOn: "buildDockerContainer") {
+    commandLine 'docker', 'run', '-p', '10022:22', '--name', "datacollector_${version}", '-i', '-t', "datacollector:${version}"
+}
