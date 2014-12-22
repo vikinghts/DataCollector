@@ -198,6 +198,6 @@ task buildDockerContainer(type: Exec, dependsOn: "copyJarDocker") {
 
 task runDockerContainer(type: Exec, dependsOn: "buildDockerContainer") {
     environment 'DOCKER_HOST', DOCKER_HOST
-    commandLine '/usr/local/bin/docker', 'run', '-p', '10022:22', '-i', '-t', "datacollector:${version}"
+    commandLine '/usr/local/bin/docker', 'run', '-p', '10022:22', '--privileged', '-v', '/dev/ttyUSB0:/dev/ttyUSB0', '-i', '-t', "datacollector:${version}"
 //    commandLine '/usr/local/bin/docker', 'run', '-p', '10022:22', '--name', "datacollector_${version}", '-i', '-t', "datacollector:${version}"
 }
