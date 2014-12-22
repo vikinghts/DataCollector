@@ -192,12 +192,12 @@ task copyJarDocker(type: Copy, dependsOn: "jar") {
 
 task buildDockerContainer(type: Exec, dependsOn: "copyJarDocker") {
     workingDir 'docker/'
-    environment 'DOCKER_HOST', 'tcp://localhost:4243'
+    environment 'DOCKER_HOST', DOCKER_HOST
     commandLine '/usr/local/bin/docker', 'build', '-t', "datacollector:${version}", '.'
 }
 
 task runDockerContainer(type: Exec, dependsOn: "buildDockerContainer") {
-    environment 'DOCKER_HOST', 'tcp://localhost:4243'
+    environment 'DOCKER_HOST', DOCKER_HOST
     commandLine '/usr/local/bin/docker', 'run', '-p', '10022:22', '-i', '-t', "datacollector:${version}"
 //    commandLine '/usr/local/bin/docker', 'run', '-p', '10022:22', '--name', "datacollector_${version}", '-i', '-t', "datacollector:${version}"
 }
