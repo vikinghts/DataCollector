@@ -202,7 +202,7 @@ publishing {
 }
 */
 
-task copyJarDocker(type: Copy, dependsOn: "jar") {
+task copyJarDocker(type: Copy, dependsOn: ["jar", "shadow"]) {
     from "build/libs"
     into 'docker'
 }
