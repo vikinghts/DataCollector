@@ -11,8 +11,8 @@ run ln -s /usr/share/java/RXTXcomm.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib
 run service ssh start
 run useradd datacollector -m -d /home/datacollector -N -p "datacollector"
 run echo 'export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64' > /etc/profile.d/java.sh
-add DataCollector-0.1.jar /tmp/DataCollector-0.1.jar
+add DataCollector-0.1-shadow.jar /tmp/DataCollector-0.1-shadow.jar
 
-CMD ["java", "-jar", "/tmp/DataCollector-0.1.jar"]
+CMD ["java", "-jar", "/tmp/DataCollector-0.1-shadow.jar"]
 
 EXPOSE 22
