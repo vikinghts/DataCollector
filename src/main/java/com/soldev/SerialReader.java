@@ -23,7 +23,7 @@ public class SerialReader implements Runnable {
         DataHandler dataHandler = new DataHandler();
         try {
             while ((len = this.in.read(buffer)) > -1) {
-                System.out.print(new String(buffer, 0, len));
+                //System.out.print(new String(buffer, 0, len));
                 rawMeterData = rawMeterData + new String(buffer, 0, len);
                 if (new String(buffer, 0, len).contains("!")) {
                     break;

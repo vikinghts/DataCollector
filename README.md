@@ -9,8 +9,14 @@ and this one http://jlog.org/rxtx-mac.html
 
 yum install rxtx
 
+Added the option to create a fat jar:
+https://github.com/johnrengelman/shadow
+
+FAQ
+============
 when problems read this : http://stackoverflow.com/questions/22164784/noclassdeffounderror-could-not-initialize-class
 
 if you get : java.lang.NoClassDefFoundError: Could not initialize class gnu.io
 
 Make sure this or something similar is done : ln -s /usr/share/java/RXTXcomm.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext/RXTXcomm.jar
+

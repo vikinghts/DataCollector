@@ -2,11 +2,17 @@ buildscript {
     repositories {
         maven { url 'http://jcenter.bintray.com' }
         mavenCentral()
+        maven {
+            name 'Shadow'
+            url 'http://dl.bintray.com/content/johnrengelman/gradle-plugins'
+        }
     }
 
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4'
         classpath 'org.hidetake:gradle-ssh-plugin:0.3.0'
+        classpath 'org.gradle.plugins:shadow:0.7.4'
+
     }
 }
 
@@ -26,6 +32,8 @@ apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
 apply plugin: "sonar-runner"
 apply plugin: 'maven-publish'
+apply plugin: 'shadow'
+
 
 
 repositories {
@@ -165,7 +173,15 @@ artifacts{
     archives jar
 }
 
+uploadArchives {
+    repositories {
+        flatDir {
+            dirs 'build/repos'
+        }
+    }
+}
 
+/*
 publishing {
     publications {
         maven(MavenPublication){
@@ -184,6 +200,7 @@ publishing {
         }
     }
 }
+*/
 
 task copyJarDocker(type: Copy, dependsOn: "jar") {
     from "build/libs"

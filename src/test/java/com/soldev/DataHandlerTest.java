@@ -14,6 +14,8 @@ public class DataHandlerTest {
     public void testPostMetaData() {
         // setup
         String meterResponse = "";
+        meterResponse += "/ISk5\2MT382-1004\n";
+        meterResponse += "\n";
         meterResponse += "0-0:96.1.1(5A424556303035313838353931393133)\n";
         meterResponse += "1-0:1.8.1(00897.515*kWh)\n";
         meterResponse += "1-0:1.8.2(00575.076*kWh)\n";
