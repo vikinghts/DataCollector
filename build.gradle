@@ -202,12 +202,8 @@ publishing {
 }
 */
 
-task copyJarDocker(type: Copy, dependsOn: ["jar", "shadow"]) {
-    from "build/libs"
-    into 'docker'
-}
 
-task stopOldDockerContainer(type: Exec, dependsOn: "copyJarDocker") {
+task stopOldDockerContainer(type: Exec) {
     environment 'DOCKER_HOST', DOCKER_HOST
     commandLine '/usr/local/bin/docker', 'stop', "datacollector-run-${version}"
 }
@@ -217,8 +213,12 @@ task rmOldDockerContainer(type: Exec, dependsOn: "stopOldDockerContainer") {
     commandLine '/usr/local/bin/docker', 'rm', "datacollector-run-${version}"
 }
 
+task copyJarDocker(type: Copy, dependsOn: ["jar", "shadow"]) {
+    from "build/libs"
+    into 'docker'
+}
 
-task buildDockerContainer(type: Exec, dependsOn: "rmOldDockerContainer") {
+task buildDockerContainer(type: Exec, dependsOn: "copyJarDocker") {
     workingDir 'docker/'
     environment 'DOCKER_HOST', DOCKER_HOST
     commandLine '/usr/local/bin/docker', 'build', '-t', "datacollector:${version}", '.'
@@ -228,5 +228,5 @@ task runDockerContainer(type: Exec, dependsOn: "buildDockerContainer") {
     environment 'DOCKER_HOST', DOCKER_HOST
     // to expose port to outside world:  '-p', '10022:22',
     // to make a usb to serial adapeter available: '--privileged', '-v', '/dev/ttyUSB0:/dev/ttyUSB0'
-    commandLine '/usr/local/bin/docker', 'run', '--name', "datacollector-run-${version}", '--privileged', '-v', '/dev/ttyUSB0:/dev/ttyUSB0', '-i', '-t', "datacollector:${version}"
+    commandLine '/usr/local/bin/docker', 'run', '--cidfile="/tmp/datacollector.pid"', '--privileged', '-v', '/dev/ttyUSB0:/dev/ttyUSB0', '-i', '-t', "datacollector:${version}"
 }
