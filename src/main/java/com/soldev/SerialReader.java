@@ -26,10 +26,10 @@ public class SerialReader implements Runnable {
                 //System.out.print(new String(buffer, 0, len));
                 rawMeterData = rawMeterData + new String(buffer, 0, len);
                 if (new String(buffer, 0, len).contains("!")) {
-                    break;
+                    dataHandler.postData(rawMeterData);
+                    rawMeterData = "";
                 }
             }
-            dataHandler.postData(rawMeterData);
         } catch (IOException e) {
             e.printStackTrace();
         }

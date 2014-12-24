@@ -78,7 +78,7 @@ dependencies {
 
 jacocoTestReport {
     reports {
-        html.enabled false
+        html.enabled true
     }
 }
 
