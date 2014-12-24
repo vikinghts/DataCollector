@@ -10,8 +10,15 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class DataHandler {
     public boolean postData(String rawMeterOutput) {
-        System.out.println("Post");
+        String parsedOutput = parseLines(rawMeterOutput);
         DateTime measureDateTime = new DateTime();
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
+        parsedOutput = "?MeasureDataTime=" + fmt.print(measureDateTime) + parsedOutput;
+        System.out.println(parsedOutput);
+        return true;
+    }
+
+    public String parseLines(String rawMeterOutput) {
         Float currentPower = 0.0f;
         Float totalGas = 0.0f;
         Float totalDalPower = 0.0f;
@@ -31,14 +38,10 @@ public class DataHandler {
                 totalPiekPower = Float.parseFloat(line.substring(10, 15));
             }
         }
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-        String urlToPost = "?MeasureDataTime=" + fmt.print(measureDateTime) +
-                "?CurrentPower=" + currentPower.toString() +
+        return "?CurrentPower=" + currentPower.toString() +
                 "?totalGas=" + totalGas.toString() +
                 "?totalDalPower=" + totalDalPower.toString() +
                 "?totalPiekPower=" + totalPiekPower.toString();
-        System.out.println(urlToPost);
-        return true;
     }
 
 }

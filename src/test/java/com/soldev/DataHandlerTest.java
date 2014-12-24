@@ -1,7 +1,9 @@
 package com.soldev;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -10,10 +12,13 @@ import static org.junit.Assert.assertTrue;
  * This class test the datahandler class
  */
 public class DataHandlerTest {
-    @Test
-    public void testPostMetaData() {
+    String meterResponse = "";
+    String parsedResult = "";
+
+
+    @Before
+    public void setup() {
         // setup
-        String meterResponse = "";
         meterResponse += "/ISk5\2MT382-1004\n";
         meterResponse += "\n";
         meterResponse += "0-0:96.1.1(5A424556303035313838353931393133)\n";
@@ -35,10 +40,21 @@ public class DataHandlerTest {
         meterResponse += "0-1:24.4.0(1)\n";
         meterResponse += "!\n";
 
-        final DataHandler dataHandler = new DataHandler();
+        parsedResult = "?CurrentPower=700.0?totalGas=367857.0?totalDalPower=897.0?totalPiekPower=575.0";
+    }
 
+    @Test
+    public void testPostMetaData() {
+        final DataHandler dataHandler = new DataHandler();
         // execute/validate
         assertTrue(dataHandler.postData(meterResponse));
-
     }
+
+    @Test
+    public void testparseLines() {
+        final DataHandler dataHandler = new DataHandler();
+        // execute/validate
+        assertEquals(dataHandler.parseLines(meterResponse), parsedResult);
+    }
+
 }
