@@ -204,8 +204,10 @@ publishing {
 
 
 task stopAndRemoveOldDockerContainer(type: Exec) {
+    def dockerCommand = new File('/tmp/dockerCommand.sh')
+    dockerCommand.write('/usr/local/bin/docker rm -f $(/usr/local/bin/docker ps -q -f name=datacollector)')
     environment 'DOCKER_HOST', DOCKER_HOST
-    commandLine '/usr/local/bin/docker', 'rm', '-f', '$(docker ps -q -f name=datacollector)'
+    commandLine 'sh', '/tmp/dockerCommand.sh'
 }
 
 
