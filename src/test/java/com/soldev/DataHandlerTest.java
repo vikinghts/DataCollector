@@ -31,7 +31,7 @@ public class DataHandlerTest {
         meterResponse += "0-1:24.1.0(3)\n";
         meterResponse += "0-1:96.1.0(4730303135353631313038363337323133)\n";
         meterResponse += "0-1:24.3.0(141222220000)(00)(60)(1)(0-1:24.2.1)(m3)\n";
-        meterResponse += "    (00367.857)\n";
+        meterResponse += "(00367.857)\n";
         meterResponse += "0-1:24.4.0(1)\n";
         meterResponse += "!\n";
 
