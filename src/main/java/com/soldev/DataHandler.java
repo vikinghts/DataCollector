@@ -29,7 +29,7 @@ public class DataHandler {
 
         // Step2: Now pass JSON File Data to REST Service
         try {
-            URL url = new URL("http://odin:3232/DataManager-0.1/api/DataManagerService");
+            URL url = new URL("http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService");
             URLConnection connection = url.openConnection();
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
