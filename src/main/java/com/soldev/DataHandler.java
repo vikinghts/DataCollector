@@ -3,6 +3,14 @@ package com.soldev;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+
 
 /**
  * Created by kjansen on 22/12/14.
@@ -13,8 +21,35 @@ public class DataHandler {
         String parsedOutput = parseLines(rawMeterOutput);
         DateTime measureDateTime = new DateTime();
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-        parsedOutput = "?MeasureDataTime=" + fmt.print(measureDateTime) + parsedOutput;
+        parsedOutput = "{\"MeasureDataTime\":" + fmt.print(measureDateTime) + "," + parsedOutput + "}";
         System.out.println(parsedOutput);
+
+        JSONObject jsonObject = new JSONObject(parsedOutput);
+        System.out.println(jsonObject);
+
+        // Step2: Now pass JSON File Data to REST Service
+        try {
+            URL url = new URL("http://localhost:3232/DataManager-0.1/api/DataManagerService");
+            URLConnection connection = url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+            out.write(jsonObject.toString());
+            out.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
+
+            while (in.readLine() != null) {
+            }
+            System.out.println("\nREST Service Invoked Successfully..");
+            in.close();
+        } catch (Exception e) {
+            System.out.println("\nError while calling REST Service");
+            System.out.println(e);
+        }
         return true;
     }
 
@@ -38,10 +73,10 @@ public class DataHandler {
                 totalPiekPower = Float.parseFloat(line.substring(10, 15));
             }
         }
-        return "?CurrentPower=" + currentPower.toString() +
-                "?totalGas=" + totalGas.toString() +
-                "?totalDalPower=" + totalDalPower.toString() +
-                "?totalPiekPower=" + totalPiekPower.toString();
+        return "\"CurrentPower\":" + currentPower.toString() + "," +
+                "\"totalGas\":" + totalGas.toString() + "," +
+                "\"totalDalPower\":" + totalDalPower.toString() + "," +
+                "\"totalPiekPower\":" + totalPiekPower.toString();
     }
 
 }

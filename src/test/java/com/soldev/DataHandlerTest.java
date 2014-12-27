@@ -40,7 +40,7 @@ public class DataHandlerTest {
         meterResponse += "0-1:24.4.0(1)\n";
         meterResponse += "!\n";
 
-        parsedResult = "?CurrentPower=700.0?totalGas=367857.0?totalDalPower=897.0?totalPiekPower=575.0";
+        parsedResult = "\"CurrentPower\":700.0,\"totalGas\":367857.0,\"totalDalPower\":897.0,\"totalPiekPower\":575.0";
     }
 
     @Test
