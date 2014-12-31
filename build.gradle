@@ -9,7 +9,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4'
         classpath 'org.hidetake:gradle-ssh-plugin:0.3.0'
         classpath 'org.gradle.plugins:shadow:0.7.4'
 
@@ -22,7 +21,6 @@ task wrapper(type: Wrapper) {
 
 version = 0.1
 
-apply plugin: 'cargo'
 apply plugin: 'ssh'
 apply plugin: 'java'
 apply plugin: 'war'
@@ -54,19 +52,12 @@ dependencies {
     compile 'org.rxtx:rxtx:2.1.7'
     compile 'javax.servlet:servlet-api:2.5'
     compile 'org.json:json:20131018'
-    compile(group: 'log4j', name: 'log4j', version: '1.2.17')
-    compile(group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.6.6') // van nexus apd
-    compile(group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5')
-    testCompile localGroovy()
+    compile 'log4j:log4j:1.2.17'
+    compile 'org.slf4j:slf4j-log4j12:1.6.6'
+    compile 'org.slf4j:slf4j-api:1.7.5'
     testCompile "org.testng:testng:6.3.1"
     testCompile "junit:junit:4.9"
     testCompile "org.mockito:mockito-all:1.9.5"
-    runtime 'javax.servlet:jstl:1.1.2'
-    runtime 'postgresql:postgresql:9.0-801.jdbc4'
-    runtime "org.slf4j:log4j-over-slf4j:1.7.5"
-    runtime "org.slf4j:jcl-over-slf4j:1.7.5"
-    runtime "org.slf4j:jul-to-slf4j:1.7.5"
-    runtime "joda-time:joda-time:2.2"
     integrationTestCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2'
     integrationTestCompile configurations.testCompile
     integrationTestRuntime configurations.testRuntime
@@ -84,10 +75,6 @@ jacocoTestReport {
 }
 
 task systemTest(type: Test) {
-    doFirst{
-        //project.cargo.deployable.context = "smartMeterSystemTest"
-        //cargoReDeployRemote.execute()
-    }
     testClassesDir = sourceSets.systemTest.output.classesDir
     classpath = sourceSets.systemTest.runtimeClasspath
     reports.junitXml.destination = file("${reporting.baseDir}/systemTest")
@@ -111,8 +98,8 @@ task integrationTest(type: Test) {
 
 task liveTestGroup(dependsOn: ['systemTest', 'performanceTest', 'integrationTest'])
 //to start/stop tomcat for test runs
-liveTestGroup.dependsOn war, cargoStartLocal
-liveTestGroup.finalizedBy cargoStopLocal
+//liveTestGroup.dependsOn war, cargoStartLocal
+//liveTestGroup.finalizedBy cargoStopLocal
 
 sonarRunner {
     sonarProperties {
