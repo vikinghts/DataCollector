@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,17 +19,19 @@ import java.net.URLConnection;
  * This class parses the meter data and extracts it values to post them to a web socket.
  */
 public class DataHandler {
-    public boolean postData(String rawMeterOutput) {
+    private static final Logger LOG = LoggerFactory.getLogger(DataHandler.class);
+
+
+    public boolean postCollectedData(String rawMeterOutput) {
         String parsedOutput = parseLines(rawMeterOutput);
         DateTime measureDateTime = new DateTime();
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
         parsedOutput = "{\"MeasureDataTime\":" + fmt.print(measureDateTime) + "," + parsedOutput + "}";
-        System.out.println(parsedOutput);
+        LOG.debug(parsedOutput);
 
         JSONObject jsonObject = new JSONObject(parsedOutput);
-        System.out.println(jsonObject);
 
-        // Step2: Now pass JSON File Data to REST Service
+        // Send the json data to the rest service as JSON.
         try {
             URL url = new URL("http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService");
             URLConnection connection = url.openConnection();
@@ -44,11 +48,11 @@ public class DataHandler {
 
             while (in.readLine() != null) {
             }
-            System.out.println("\nREST Service Invoked Successfully..");
+            LOG.debug("\nREST Service Invoked Successfully..");
             in.close();
         } catch (Exception e) {
-            System.out.println("\nError while calling REST Service");
-            System.out.println(e);
+            LOG.error("\nError while calling REST Service");
+            LOG.error(e.toString());
         }
         return true;
     }

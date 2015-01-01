@@ -1,11 +1,15 @@
 package com.soldev;
 
-import java.io.IOException;
+import gnu.io.CommPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
-import gnu.io.*;
 
 public class Collect {
-
+    private static final Logger LOG = LoggerFactory.getLogger(Collect.class);
 
     public static void main( String[] args ) {
         try {
@@ -19,7 +23,7 @@ public class Collect {
       CommPortIdentifier portIdentifier = CommPortIdentifier
               .getPortIdentifier(portName);
       if (portIdentifier.isCurrentlyOwned()) {
-          System.out.println("Error: Port is currently in use");
+          LOG.error("Error: Port is currently in use");
       } else {
           int timeout = 2000;
           CommPort commPort = portIdentifier.open(this.getClass().getName(), timeout);
@@ -37,7 +41,7 @@ public class Collect {
               (new Thread(new SerialReader(in))).start();
 
           } else {
-              System.out.println("Error: Only serial ports are handled by this example.");
+              LOG.error("Error: Only serial ports are handled by this example.");
           }
       }
   }
