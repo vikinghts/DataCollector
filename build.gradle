@@ -16,7 +16,7 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "2.0"
+    gradleVersion = "2.2.1"
 }
 
 version = 0.1
@@ -104,6 +104,11 @@ task liveTestGroup(dependsOn: ['systemTest', 'performanceTest', 'integrationTest
 sonarRunner {
     sonarProperties {
         property "sonar.jacoco.reportPath", "$buildDir/jacoco/test.exec"
+        property "sonar.jdbc.driverClassName", "org.postgresql.Driver"
+        property "sonar.host.url", System.getenv("SonarUrl") ?: "dummy"
+        property "sonar.jdbc.url", System.getenv("SonarDB") ?: "dummy"
+        property "sonar.jdbc.username", System.getenv("SonarUser") ?: "dummy"
+        property "sonar.jdbc.password", System.getenv("SonarPass") ?: "dummy"
     }
 }
 
