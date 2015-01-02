@@ -12,7 +12,8 @@ public class Collect {
     private static String serverUrl;
 
     public static void main( String[] args ) {
-        serverUrl = "http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService";
+        //Get url From commandline.
+        serverUrl = args[0];
         try {
             ( new Collect() ).connect( "/dev/ttyUSB0" );
         } catch( Exception e ) {

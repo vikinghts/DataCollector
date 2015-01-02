@@ -13,6 +13,6 @@ run useradd datacollector -m -d /home/datacollector -N -p "datacollector"
 run echo 'export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64' > /etc/profile.d/java.sh
 add DataCollector-0.1-shadow.jar /tmp/DataCollector-0.1-shadow.jar
 
-CMD ["java", "-jar", "/tmp/DataCollector-0.1-shadow.jar"]
+CMD ["java", "-jar", "/tmp/DataCollector-0.1-shadow.jar", "http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService"]
 
 EXPOSE 22
