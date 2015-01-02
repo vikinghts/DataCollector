@@ -12,8 +12,8 @@ import static org.junit.Assert.assertTrue;
  * This class test the datahandler class
  */
 public class DataHandlerTest {
-    String meterResponse = "";
-    String parsedResult = "";
+    private String meterResponse = "";
+    private String parsedResult = "";
 
 
     @Before
@@ -47,7 +47,7 @@ public class DataHandlerTest {
     public void testPostMetaData() {
         final DataHandler dataHandler = new DataHandler();
         // execute/validate
-        assertTrue(dataHandler.postData(meterResponse));
+        assertTrue(dataHandler.postCollectedData(meterResponse));
     }
 
     @Test

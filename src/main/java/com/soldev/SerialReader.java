@@ -8,8 +8,8 @@ import java.io.InputStream;
  * Created by kjansen on 16/12/14.
  * This class Reads data from the smart meter through a com port.
  */
-public class SerialReader implements Runnable {
-    InputStream in;
+class SerialReader implements Runnable {
+    private final InputStream in;
 
     public SerialReader( InputStream in ) {
         this.in = in;

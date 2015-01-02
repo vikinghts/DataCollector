@@ -18,12 +18,13 @@ import java.net.URLConnection;
  * Created by kjansen on 22/12/14.
  * This class parses the meter data and extracts it values to post them to a web socket.
  */
-public class DataHandler {
+class DataHandler {
     private static final Logger LOG = LoggerFactory.getLogger(DataHandler.class);
 
 
     public boolean postCollectedData(String rawMeterOutput) {
         String parsedOutput = parseLines(rawMeterOutput);
+        Boolean status = false;
         DateTime measureDateTime = new DateTime();
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
         parsedOutput = "{\"MeasureDataTime\":" + fmt.print(measureDateTime) + "," + parsedOutput + "}";
@@ -47,14 +48,17 @@ public class DataHandler {
                     connection.getInputStream()));
 
             while (in.readLine() != null) {
+                LOG.debug(in.readLine());
             }
             LOG.debug("\nREST Service Invoked Successfully..");
+            status = true;
             in.close();
         } catch (Exception e) {
             LOG.error("\nError while calling REST Service");
             LOG.error(e.toString());
+            status = false;
         }
-        return true;
+        return status;
     }
 
     public String parseLines(String rawMeterOutput) {
