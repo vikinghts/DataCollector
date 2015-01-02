@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Collect {
+    public static final int TIMEOUT = 2000;
+    public static final int BOUDRATE = 9600;
     private static final Logger LOG = LoggerFactory.getLogger(Collect.class);
     private static String serverUrl;
 
@@ -27,12 +29,12 @@ public class Collect {
       if (portIdentifier.isCurrentlyOwned()) {
           LOG.error("Error: Port is currently in use");
       } else {
-          int timeout = 2000;
+          int timeout = TIMEOUT;
           CommPort commPort = portIdentifier.open(this.getClass().getName(), timeout);
 
           if (commPort instanceof SerialPort) {
               SerialPort serialPort = (SerialPort) commPort;
-              serialPort.setSerialPortParams(9600,
+              serialPort.setSerialPortParams(BOUDRATE,
                       SerialPort.DATABITS_7,
                       SerialPort.STOPBITS_1,
                       SerialPort.PARITY_EVEN);

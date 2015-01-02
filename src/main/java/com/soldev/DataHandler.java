@@ -19,6 +19,14 @@ import java.net.URLConnection;
  * This class parses the meter data and extracts it values to post them to a web socket.
  */
 class DataHandler {
+    public static final int BEGIN_INDEX_CURPOWER = 10;
+    public static final int BEGIN_INDEX_TGAS = 1;
+    public static final int BEGIN_INDEX_TDPOW = 10;
+    public static final int BEGIN_INDEX_TPPOW = 10;
+    public static final int END_INDEX_CURPOWER = 17;
+    public static final int END_INDEX_TGAS = 10;
+    public static final int END_INDEX_TDPOW = 15;
+    public static final int END_INDEX_TPPOW = 15;
     private static final int TIMEOUT = 5000;
     private static final int WATTTOKW = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(DataHandler.class);
@@ -69,16 +77,16 @@ class DataHandler {
         for (String line : rawMeterOutput.split("\\r?\\n")) {
             //current power usage : "1-0:1.7.0"
             if (line.contains("1-0:1.7.0")) {
-                currentPower = Float.parseFloat(line.substring(10, 17)) * WATTTOKW;
+                currentPower = Float.parseFloat(line.substring(BEGIN_INDEX_CURPOWER, END_INDEX_CURPOWER)) * WATTTOKW;
             }
             if (line.startsWith("(")) {
-                totalGas = Float.parseFloat(line.substring(1, 10)) * WATTTOKW;
+                totalGas = Float.parseFloat(line.substring(BEGIN_INDEX_TGAS, END_INDEX_TGAS)) * WATTTOKW;
             }
             if (line.contains("1-0:1.8.1")) {
-                totalDalPower = Float.parseFloat(line.substring(10, 15));
+                totalDalPower = Float.parseFloat(line.substring(BEGIN_INDEX_TDPOW, END_INDEX_TDPOW));
             }
             if (line.contains("1-0:1.8.2")) {
-                totalPiekPower = Float.parseFloat(line.substring(10, 15));
+                totalPiekPower = Float.parseFloat(line.substring(BEGIN_INDEX_TPPOW, END_INDEX_TPPOW));
             }
         }
         return "\"CurrentPower\":" + currentPower.toString() + "," +
