@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kjansen on 22/12/14.
- * This class test the datahandler class
+ * This class test the DataHandler class
  */
 public class DataHandlerTest {
     private String meterResponse = "";
@@ -51,7 +51,7 @@ public class DataHandlerTest {
     }
 
     @Test
-    public void testparseLines() {
+    public void testParseLines() {
         final DataHandler dataHandler = new DataHandler();
         // execute/validate
         assertEquals(dataHandler.parseLines(meterResponse), parsedResult);

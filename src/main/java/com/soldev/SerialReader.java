@@ -12,7 +12,7 @@ import java.io.InputStream;
  * This class Reads data from the smart meter through a com port.
  */
 class SerialReader implements Runnable {
-    public static final int BUFFERSIZE = 1024;
+    private static final int BUFFERSIZE = 1024;
     private static final Logger LOG = LoggerFactory.getLogger(SerialReader.class);
     private final InputStream in;
 

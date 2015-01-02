@@ -1,7 +1,7 @@
 DataCollector
 =============
 
-Get smartmeter data through the com interface
+Get SmartMeter data through the com interface
 
 follow this link http://eclipsesource.com/blogs/2012/10/17/serial-communication-in-java-with-raspberry-pi-and-rxtx/
 

@@ -19,8 +19,8 @@ import java.net.URLConnection;
  * This class parses the meter data and extracts it values to post them to a web socket.
  */
 class DataHandler {
-    public static final int TIMEOUT = 5000;
-    public static final int WATTTOKW = 1000;
+    private static final int TIMEOUT = 5000;
+    private static final int WATTTOKW = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(DataHandler.class);
 
     public boolean postCollectedData(String rawMeterOutput) {
