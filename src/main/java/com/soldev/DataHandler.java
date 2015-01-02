@@ -24,7 +24,7 @@ class DataHandler {
 
     public boolean postCollectedData(String rawMeterOutput) {
         String parsedOutput = parseLines(rawMeterOutput);
-        Boolean status = false;
+        Boolean status;
         DateTime measureDateTime = new DateTime();
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
         parsedOutput = "{\"MeasureDataTime\":" + fmt.print(measureDateTime) + "," + parsedOutput + "}";
