@@ -1,11 +1,10 @@
 package com.soldev;
 
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
+import gnu.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public class Collect {
@@ -15,11 +14,11 @@ public class Collect {
         try {
             ( new Collect() ).connect( "/dev/ttyUSB0" );
         } catch( Exception e ) {
-            e.printStackTrace();
+            LOG.error("Exception: ", e);
         }
     }
- 
-  void connect( String portName ) throws Exception {
+
+    void connect(String portName) throws UnsupportedCommOperationException, NoSuchPortException, PortInUseException, IOException {
       CommPortIdentifier portIdentifier = CommPortIdentifier
               .getPortIdentifier(portName);
       if (portIdentifier.isCurrentlyOwned()) {
