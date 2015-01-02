@@ -47,7 +47,8 @@ public class DataHandlerTest {
     public void testPostMetaData() {
         final DataHandler dataHandler = new DataHandler();
         // execute/validate
-        assertTrue(dataHandler.postCollectedData(meterResponse));
+        String serverUrl = "http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService";
+        assertTrue(dataHandler.postCollectedData(meterResponse, serverUrl));
     }
 
     @Test

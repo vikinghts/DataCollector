@@ -9,8 +9,10 @@ import java.io.InputStream;
 
 public class Collect {
     private static final Logger LOG = LoggerFactory.getLogger(Collect.class);
+    private static String serverUrl;
 
     public static void main( String[] args ) {
+        serverUrl = "http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService";
         try {
             ( new Collect() ).connect( "/dev/ttyUSB0" );
         } catch( Exception e ) {
@@ -34,13 +36,12 @@ public class Collect {
                       SerialPort.STOPBITS_1,
                       SerialPort.PARITY_EVEN);
 
-
               InputStream in = serialPort.getInputStream();
 
-              (new Thread(new SerialReader(in))).start();
+              (new Thread(new SerialReader(in, serverUrl))).start();
 
           } else {
-              LOG.error("Error: Only serial ports are handled by this example.");
+              LOG.error("Error: Only serial ports are handled.");
           }
       }
   }

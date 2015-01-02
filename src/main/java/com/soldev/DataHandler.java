@@ -23,7 +23,7 @@ class DataHandler {
     private static final int WATTTOKW = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(DataHandler.class);
 
-    public boolean postCollectedData(String rawMeterOutput) {
+    public boolean postCollectedData(String rawMeterOutput, String serverUrl) {
         String parsedOutput = parseLines(rawMeterOutput);
         Boolean status;
         DateTime measureDateTime = new DateTime();
@@ -35,7 +35,7 @@ class DataHandler {
 
         // Send the json data to the rest service as JSON.
         try {
-            URL url = new URL("http://192.168.8.1:3232/DataManager-0.1/api/DataManagerService");
+            URL url = new URL(serverUrl);
             URLConnection connection = url.openConnection();
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");

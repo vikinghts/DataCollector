@@ -15,9 +15,11 @@ class SerialReader implements Runnable {
     private static final int BUFFERSIZE = 1024;
     private static final Logger LOG = LoggerFactory.getLogger(SerialReader.class);
     private final InputStream in;
+    private final String serverUrl;
 
-    public SerialReader( InputStream in ) {
+    public SerialReader(InputStream in, String serverUrl) {
         this.in = in;
+        this.serverUrl = serverUrl;
     }
 
     public void run() {
@@ -29,7 +31,7 @@ class SerialReader implements Runnable {
             while ((len = this.in.read(buffer)) > -1) {
                 rawMeterData = rawMeterData + new String(buffer, 0, len);
                 if (new String(buffer, 0, len).contains("!")) {
-                    dataHandler.postCollectedData(rawMeterData);
+                    dataHandler.postCollectedData(rawMeterData, serverUrl);
                     rawMeterData = "";
                 }
             }
