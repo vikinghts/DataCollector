@@ -19,8 +19,9 @@ import java.net.URLConnection;
  * This class parses the meter data and extracts it values to post them to a web socket.
  */
 class DataHandler {
+    public static final int TIMEOUT = 5000;
+    public static final int WATTTOKW = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(DataHandler.class);
-
 
     public boolean postCollectedData(String rawMeterOutput) {
         String parsedOutput = parseLines(rawMeterOutput);
@@ -38,8 +39,8 @@ class DataHandler {
             URLConnection connection = url.openConnection();
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(TIMEOUT);
+            connection.setReadTimeout(TIMEOUT);
             OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
             out.write(jsonObject.toString());
             out.close();
@@ -54,8 +55,7 @@ class DataHandler {
             status = true;
             in.close();
         } catch (Exception e) {
-            LOG.error("\nError while calling REST Service");
-            LOG.error(e.toString());
+            LOG.error("\nError while calling REST Service", e);
             status = false;
         }
         return status;
@@ -69,10 +69,10 @@ class DataHandler {
         for (String line : rawMeterOutput.split("\\r?\\n")) {
             //current power usage : "1-0:1.7.0"
             if (line.contains("1-0:1.7.0")) {
-                currentPower = Float.parseFloat(line.substring(10, 17)) * 1000;
+                currentPower = Float.parseFloat(line.substring(10, 17)) * WATTTOKW;
             }
             if (line.startsWith("(")) {
-                totalGas = Float.parseFloat(line.substring(1, 10)) * 1000;
+                totalGas = Float.parseFloat(line.substring(1, 10)) * WATTTOKW;
             }
             if (line.contains("1-0:1.8.1")) {
                 totalDalPower = Float.parseFloat(line.substring(10, 15));
